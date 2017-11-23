@@ -1,3 +1,5 @@
+library(dplyr)
+
 download.file(url = "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", destfile = "data.zip")
 unzip(zipfile = "data.zip")
 
@@ -16,4 +18,16 @@ trainDF$Lable <- read.table("UCI HAR Dataset/train/y_train.txt")[,1]
 rownames(trainDF) <-c()
 
 mergedDF <- rbind(testDF,trainDF)
+valid_names <- make.names(names = names(mergedDF),unique = TRUE, allow_ = TRUE)
+names(mergedDF) <- valid_names
 
+mergedDF2 <- mergedDF %>%
+        select(matches("std\\.\\.|mean\\.\\.",ignore.case = FALSE),"Subj","Lable")
+
+LabelsDF <- read.table("UCI HAR Dataset/activity_labels.txt")
+
+mergedDF2$Lable <- sapply(X = mergedDF2$Lable, FUN = function(x) LabelsDF$V2[match(x,LabelsDF$V1)])
+
+resultDF <- mergedDF2 %>%
+        group_by(Subj, Lable) %>%
+        summarise_all(mean)
