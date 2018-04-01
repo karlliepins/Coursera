@@ -1,8 +1,10 @@
 library(dplyr)
 
 #Obtaining the data 
-download.file(url = "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", destfile = "data.zip")
-unzip(zipfile = "data.zip")
+if(!file.exists("UCI HAR Dataset")){
+        download.file(url = "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", destfile = "data.zip")
+        unzip(zipfile = "data.zip")
+}
 
 VarNames <- read.table("UCI HAR Dataset/features.txt")
 
@@ -37,3 +39,6 @@ mergedDF2$Lable <- sapply(X = mergedDF2$Lable, FUN = function(x) LabelsDF$V2[mat
 resultDF <- mergedDF2 %>%
         group_by(Subj, Lable) %>%
         summarise_all(mean)
+
+#Write the results to txt file
+write.table(x = resultDF, file = "resultDF.txt", row.names = FALSE)
