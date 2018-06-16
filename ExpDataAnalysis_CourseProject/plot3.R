@@ -1,5 +1,4 @@
 library(ggplot2)
-library(tidyr)
 # Reading data files
 MainDF <- readRDS(file = "summarySCC_PM25.rds")
 SourceDF <- readRDS("Source_Classification_Code.rds")
